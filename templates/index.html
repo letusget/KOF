@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>拳皇</title>
+
+    <!-- 引入样式表 -->
+    <link rel="stylesheet" href="../static/css/base.css" />
+    <!-- 引入JQuery -->
+    <script src="https://cdn.acwing.com/static/jquery/js/jquery-3.3.1.min.js"></script>
+  </head>
+
+  <body style="margin: 0px">
+    <!-- 拳皇游戏窗口 -->
+    <div id="kof">
+      <div id="info">
+        <span>提示：无法运行，请使用大屏设备</span>
+      </div>
+
+      <!-- 引入JS -->
+      <script type="module">
+        import { KOF } from "../static/js/base.js";
+
+        // 实例化一个类 //
+        let kof = new KOF("kof");
+      </script>
+    </div>
+  </body>
+</html>
