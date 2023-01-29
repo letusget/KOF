@@ -34,12 +34,11 @@ class GameMap extends GameObject {
 
     render() {
         //每帧需要清空一次canvas，这样就显示的是移动的画面，而不是轨迹
-        //this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height); //清空地图, 参考：https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/clearRect
+        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height); //清空地图, 参考：https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/clearRect
         //console.log(this.$canvas.width());    //这样的方式也可以获取到宽高
-
         //参考绘制一个矩形：https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
-        this.ctx.fillStyle = "black";
-        this.ctx.fillRect(0, 0, this.$canvas.width(), this.$canvas.height());
+        // this.ctx.fillStyle = "black";
+        // this.ctx.fillRect(0, 0, this.$canvas.width(), this.$canvas.height());
         //console.log("testMap");
     }
 }

@@ -1,32 +1,36 @@
 /* 小于768px的屏幕 */
 #info {
-  width: 100%;
-  height: 300px;
-  background-color: lightblue;
-  color: red;
-  font-size: 18px;
-  text-align: center;
+    width: 100%;
+    height: 300px;
+    background-color: lightblue;
+    color: red;
+    font-size: 18px;
+    text-align: center;
 }
 
 /* 大于768px的屏幕 */
 @media (min-width: 768px) {
-  /* 720P 显示 */
-  #kof {
-    width: 1280px;
-    height: 720px;
-    /* background-color: lightblue; */
-    /* background-image: url("../images/backgroud/stage.gif"); */
-    background-image: url("../images/backgroud/bus_back.gif");
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    /* background-size: 200% 100%; */
-    background-position: top;
-    /* background-attachment: fixed; */
-    position: absolute;
-  }
+    /* 720P 显示 */
+    #kof {
+        width: 1280px;
+        height: 720px;
+        /* background-color: lightblue; */
+        /* background-image: url("../images/backgroud/stage.gif"); */
+        background-image: url("../images/backgroud/bus_back.gif");
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        /* background-size: 200% 100%; */
+        background-position: top;
+        /* TODO 背景图片固定，不出现滚动条 */
+        /* background-attachment: fixed; */
+        /* overflow: hidden; */
+        /* vertical-align: bottom; */
+        /* display: block; */
+        position: absolute;
+    }
 
-  /* 隐藏低分辨率设备提示 */
-  #info {
-    display: none;
-  }
+    /* 隐藏低分辨率设备提示 */
+    #info {
+        display: none;
+    }
 }
