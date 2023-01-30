@@ -22,6 +22,13 @@ class GameMap extends GameObject {
 
         //实例化控制层
         this.controller = new Controller(this.$canvas);
+
+        // this.root.$kof.append(`<!-- 计时器与血条 -->
+        // <div class="kof-head">
+        //     <div class="kof-head-hp-0"></div>
+        //     <div class="kof-head-timer"></div>
+        //     <div class="kof-head-hp-1"></div>
+        // </div>`);
     }
 
     start() {}

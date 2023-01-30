@@ -8,6 +8,7 @@
 
         <!-- 引入样式表 -->
         <link rel="stylesheet" href="../static/css/base.css" />
+
         <!-- 引入JQuery -->
         <script src="https://cdn.acwing.com/static/jquery/js/jquery-3.3.1.min.js"></script>
     </head>
@@ -15,8 +16,21 @@
     <body style="margin: 0px">
         <!-- 拳皇游戏窗口 -->
         <div id="kof">
-            <div id="info">
+            <!-- <div id="info">
                 <span>提示：无法运行，请使用大屏设备</span>
+            </div> -->
+
+            <!-- 计时器与血条 -->
+            <div class="kof-head">
+                <div class="kof-head-hp-0">
+                    <!-- 血条 -->
+                    <div></div>
+                </div>
+                <div class="kof-head-timer">60</div>
+                <div class="kof-head-hp-1">
+                    <!-- 血条 -->
+                    <div></div>
+                </div>
             </div>
 
             <!-- 引入JS -->

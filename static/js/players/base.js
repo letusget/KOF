@@ -41,6 +41,9 @@ class Player extends GameObject {
 
         //当前记录的帧数
         this.frame_current_cnt = 0;
+
+        //生命值
+        this.hp = 100;
     }
 
     start() {}
@@ -48,14 +51,67 @@ class Player extends GameObject {
     //人物移动
     update_move() {
         //这里需要特判，否则在 跳起落地时，就会落入地面，有割裂感
-        if (this.status === 3) {
-            //模拟重力加速度
-            this.vy += this.gravity;
-        }
+        //模拟重力加速度
+        this.vy += this.gravity;
 
         //由于时间timedelta单位为毫秒，所以需要除以1000
         this.x += (this.vx * this.timedelta) / 1000; //s=v*t 计算移动距离
         this.y += (this.vy * this.timedelta) / 1000;
+
+        //人物重叠，人物可以叠罗汉
+        // let [a, b] = this.root.players;
+        // let r1 = {
+        //     x1: a.x,
+        //     y2: a.y,
+        //     x2: a.x + this.width,
+        //     y2: a.y + this.height,
+        // };
+        // let r2 = {
+        //     x1: b.x,
+        //     y1: b.y,
+        //     x2: b.x + b.width,
+        //     y2: b.y + this.height,
+        // };
+        // if (this.is_collision(r1, r2)) {
+        //     this.x -= (this.vx * this.timedelta) / 1000;
+        //     this.y -= (this.vy * this.timedelta) / 1000;
+        //     if (this.status === 3) {
+        //         this.status = 0;
+        //     }
+        // }
+
+        //人物互相推
+        let [a, b] = this.root.players;
+        if (a != this) {
+            [a, b] = [b, a];
+        }
+        let r1 = {
+            x1: a.x,
+            y2: a.y,
+            x2: a.x + this.width,
+            y2: a.y + this.height,
+        };
+        let r2 = {
+            x1: b.x,
+            y1: b.y,
+            x2: b.x + b.width,
+            y2: b.y + this.height,
+        };
+
+        let players = this.root.players;
+        let me = this;
+        let you = players[1 - this.id];
+        //这里需要特判对方的状态，如果对方已经死亡，就不能再对顶了
+        if (this.is_collision(r1, r2) && you.status != 6) {
+            //先按下的会顶着后按下的移动一段距离，而不是直接重叠
+            b.x += (this.vx * this.timedelta) / 1000 / 2;
+            b.y += (this.vy * this.timedelta) / 1000 / 2;
+            a.x += (this.vx * this.timedelta) / 1000 / 2;
+            a.y == (this.vy * this.timedelta) / 1000 / 2;
+            if (this.status === 3) {
+                this.status = 0;
+            }
+        }
 
         //游戏人物在掉落到地面就停止，否则会直接掉落到地图外
         if (this.y > 470) {
@@ -97,7 +153,7 @@ class Player extends GameObject {
         }
 
         //静止或移动时，可以跳跃
-        if (this.status === 0 || this.status === 1 || this.status === 2) {
+        if (this.status === 0 || this.status === 1) {
             //攻击状态
             if (space) {
                 this.status = 4;
@@ -133,7 +189,7 @@ class Player extends GameObject {
             } else if (a) {
                 //移动
                 this.vx = -this.speedx;
-                this.status = 2; //这里写为1也可以
+                this.status = 1; //这里写为1也可以
             } else {
                 //没有移动
 
@@ -150,6 +206,10 @@ class Player extends GameObject {
 
     //调整人物方西
     update_direction() {
+        //如果死亡，就不再改变方向
+        if (this.status === 6) {
+            return;
+        }
         let players = this.root.players;
         if (players[0] && players[1]) {
             let me = this;
@@ -164,12 +224,91 @@ class Player extends GameObject {
         }
     }
 
+    //碰撞检测
+    is_collision(r1, r2) {
+        //碰撞检测：判断两个矩形是否有交集，即两个矩形的水平方向或竖直方向有交集
+        //水平方向没有交集
+        if (Math.max(r1.x1, r2.x1) > Math.min(r1.x2, r2.x2)) {
+            return false;
+        }
+
+        if (Math.max(r1.y1, r2.y1) > Math.min(r1.y2, r2.y2)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    is_attack() {
+        //已经是死亡状态，就不再改变状态了
+        if (this.status === 6) {
+            return;
+        }
+        //转为被攻击状态，从第0帧开始渲染
+        this.status = 5;
+        this.frame_current_cnt = 0;
+
+        //生命值减少
+        this.hp = Math.max(this.hp - 50, 0); //TODO 方便调试使用50，实际需要再次调整
+
+        //let now_hp = this.hp - 50;
+        if (this.hp <= 0) {
+            this.status = 6;
+            this.frame_current_cnt = 0;
+            console.log(this.animations.get(this.status));
+            this.vx = 0;
+        }
+    }
+
+    update_attack() {
+        //处于攻击状态 且 攻击动画处于拳头最远的那帧
+        if (this.status === 4 && this.frame_current_cnt === 18) {
+            //this.status = 0;
+            let me = this;
+            let you = this.root.players[1 - this.id];
+
+            let r1, r2;
+            if (this.direction > 0) {
+                //正方向
+                //绘制红色矩形
+                r1 = {
+                    x1: me.x + 120,
+                    y1: me.y + 40,
+                    x2: me.x + 120 + 100,
+                    y2: me.y + 40 + 20,
+                };
+            } else {
+                //对称方向
+                r1 = {
+                    x1: me.x + me.width - 120 - 100,
+                    y1: me.y + 40,
+                    x2: me.x + me.width - 120 - 100 + 100,
+                    y2: me.y + 40 + 20,
+                };
+            }
+
+            r2 = {
+                x1: you.x,
+                y1: you.y,
+                x2: you.x + you.width,
+                y2: you.y + you.height,
+            };
+
+            //碰撞检测函数
+            if (this.is_collision(r1, r2)) {
+                you.is_attack();
+            }
+        }
+    }
+
     update() {
         //人物移动
         this.update_control();
         this.update_move();
         //更新人物方向
         this.update_direction();
+        //更新人物攻击效果
+        this.update_attack();
 
         //每次刷新人物
         this.render();
@@ -182,16 +321,37 @@ class Player extends GameObject {
         // this.ctx.fillRect(this.x, this.y, this.width, this.height);
         //console.log(this.width);
 
+        //标记人物简化的矩形，方便做碰撞检测
+        // this.ctx.fillStyle = "blue";
+        // this.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        //人物攻击部位
+        //正方向
+        // if (this.direction > 0) {
+        //     this.ctx.fillStyle = "red";
+        //     this.ctx.fillRect(this.x + 120, this.y + 50, 100, 20);
+        // } else {
+        //     //对称方向
+        //     this.ctx.fillStyle = "red";
+        //     this.ctx.fillRect(
+        //         this.x + this.width - 120 - 100,
+        //         this.y + 50,
+        //         100,
+        //         20
+        //     );
+        // }
+
         //渲染人物
         let status = this.status;
         //console.log(status);
+        if (this.status === 1 && this.direction * this.vx < 0) status = 2;
         let obj = this.animations.get(status);
 
         //前进方向与速度方向不同时，即为后退
         // 这里由于上面在状态中识别了 状态1和2，所以这里就不需要再特判了
-        // if (this.status === 1 && this.direction * this.vx < 0) {
-        //     status = 2;
-        // }
+        if (this.status === 1 && this.direction * this.vx < 0) {
+            status = 2;
+        }
 
         // 成功获取到人物 且 人物已经被加载
         if (obj && obj.loaded) {
@@ -241,16 +401,20 @@ class Player extends GameObject {
         // console.log(status);
         //console.log("get " + this.animations.get(status));
 
-        //攻击状态在渲染完后，需要终止，状态转换为静止
-        if (status === 4) {
+        //攻击状态和被攻击 在渲染完后，需要终止，状态转换为静止
+        if (status === 4 || status === 5 || status === 6) {
             //攻击状态 渲染到最后一帧了，如果这里不限制，就会再播放第一帧，导致闪一下
             if (
                 parseInt(this.frame_current_cnt / obj.frame_rate) ===
                 obj.frame_cnt - 1
             ) {
-                this.status = 0;
-                this.frame_current_cnt = 0;
-                console.log(this.status);
+                if (status === 6) {
+                    this.frame_current_cnt--;
+                } else {
+                    this.status = 0;
+                    //this.frame_current_cnt = 0; //TODO
+                    //console.log(this.status);
+                }
             }
         }
 

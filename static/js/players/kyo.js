@@ -10,7 +10,7 @@ class Kyo extends Player {
 
     init_animations() {
         let outer = this;
-        let offsets = [0, -22, -22, -140, 0, 0];
+        let offsets = [0, -22, -22, -140, 0, 0, 0];
         //7个 动作, 这里的i与status是绑定的，依靠animations来查询状态，然后进行贴图
         for (let i = 0; i < 7; i++) {
             let gif = GIF();
