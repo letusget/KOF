@@ -48,7 +48,7 @@
         height: 40px;
         /* calc使用时，运算符左右两边一定要有空格！！！ */
         width: calc(50% - 60px);
-        background-color: lightgreen;
+        /* background-color: lightgreen; */
         margin-left: 20px;
         border: white 5px solid;
         /* 去掉与计时器重叠的部分 */
@@ -73,17 +73,47 @@
         text-align: center;
         /* 竖直居中 */
         line-height: 80px;
+        /* 文字不会被选中 */
+        user-select: none;
     }
 
     #kof > .kof-head > .kof-head-hp-1 {
         height: 40px;
         width: calc(50% - 60px);
-        background-color: lightgreen;
+        /* background-color: lightgreen; */
         margin-right: 20px;
         border: white 5px solid;
         /* 去掉与计时器重叠的部分 */
         border-left: none;
         /* 只占用内部空间 */
         box-sizing: border-box;
+    }
+
+    #kof > .kof-head > .kof-head-hp-0 > div {
+        background-color: red;
+        height: 100%;
+        width: 100%;
+        /* 相当于想右对齐 */
+        float: right;
+    }
+
+    #kof > .kof-head > .kof-head-hp-1 > div {
+        background-color: red;
+        height: 100%;
+        width: 100%;
+    }
+
+    #kof > .kof-head > .kof-head-hp-0 > div > div {
+        background-color: lightgreen;
+        height: 100%;
+        width: 100%;
+        /* 相当于想右对齐 */
+        float: right;
+    }
+
+    #kof > .kof-head > .kof-head-hp-1 > div > div {
+        background-color: lightgreen;
+        height: 100%;
+        width: 100%;
     }
 }

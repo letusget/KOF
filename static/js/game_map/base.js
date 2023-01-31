@@ -18,6 +18,7 @@ class GameMap extends GameObject {
         );
         this.ctx = this.$canvas[0].getContext("2d");
         this.root.$kof.append(this.$canvas);
+        //聚焦canvas对象
         this.$canvas.focus();
 
         //实例化控制层
@@ -29,12 +30,33 @@ class GameMap extends GameObject {
         //     <div class="kof-head-timer"></div>
         //     <div class="kof-head-hp-1"></div>
         // </div>`);
+
+        //单位为 毫秒
+        this.time_left = 60000; //TODO
+        //选择计时器
+        this.$timer = this.root.$kof.find(".kof-head-timer");
     }
 
     start() {}
 
     //每次刷新
     update() {
+        this.time_left -= this.timedelta;
+        if (this.time_left < 0) {
+            this.time_left = 0;
+
+            //倒计时结束，但是双方都存活，就强制结束
+            let [a, b] = this.root.players;
+
+            if (a.status !== 6 && b.status !== 6) {
+                a.status = b.status = 6;
+                a.frame_current_cnt = b.frame_current_cnt = 0;
+                a.vx = b.vx = 0;
+            }
+        }
+        //将剩余时间渲染到倒计时框中
+        this.$timer.text(parseInt(this.time_left / 1000)); //转化成秒
+
         //一般使用函数封装
         this.render();
     }

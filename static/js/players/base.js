@@ -44,6 +44,10 @@ class Player extends GameObject {
 
         //生命值
         this.hp = 100;
+        //读取人物生命值槽
+        this.$hp = this.root.$kof.find(`.kof-head-hp-${this.id}>div`);
+        //内层div
+        this.$hp_div = this.$hp.find(`div`);
     }
 
     start() {}
@@ -249,13 +253,34 @@ class Player extends GameObject {
         this.frame_current_cnt = 0;
 
         //生命值减少
-        this.hp = Math.max(this.hp - 50, 0); //TODO 方便调试使用50，实际需要再次调整
+        this.hp = Math.max(this.hp - 20, 0); //TODO 方便调试使用20，实际需要再次调整
+
+        //调整生命值槽 显示
+        //内层变化慢，外层变化快，实现血槽变化拖影效果
+        this.$hp_div.animate(
+            {
+                //animate 函数实现渐变效果
+                width: (this.$hp.parent().width() * this.hp) / 100,
+            },
+            //变化时间为毫秒
+            400
+        );
+        this.$hp.animate(
+            {
+                //animate 函数实现渐变效果
+                width: (this.$hp.parent().width() * this.hp) / 100,
+            },
+            //变化时间为毫秒
+            600
+        );
+        // this.$hp.width((this.$hp.parent().width() * this.hp) / 100);
 
         //let now_hp = this.hp - 50;
         if (this.hp <= 0) {
             this.status = 6;
             this.frame_current_cnt = 0;
-            console.log(this.animations.get(this.status));
+            //console.log(this.animations.get(this.status));
+            // this.vx = -1000 * this.direction;
             this.vx = 0;
         }
     }
